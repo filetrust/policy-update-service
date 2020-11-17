@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/filetrust/policy-update-service/pkg"
+	policy "github.com/filetrust/policy-update-service/pkg"
 	"github.com/gorilla/mux"
 	"github.com/shaj13/go-guardian/auth"
 	"github.com/shaj13/go-guardian/auth/strategies/basic"
@@ -134,7 +134,7 @@ func main() {
 		log.Fatalf("init failed: LISTENTING_PORT, NAMESPACE, CONFIGMAP_NAME, USERNAME or PASSWORD environment variables not set")
 	}
 
-	log.Printf("Listening on port :%v", listeningPort)
+	log.Printf("Listening on port with TLS :%v", listeningPort)
 
 	setupGoGuardian()
 	router := mux.NewRouter()
@@ -147,5 +147,5 @@ func main() {
 	n.Use(negroni.HandlerFunc(authMiddleware))
 	n.UseHandler(router)
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", listeningPort), n))
+	log.Fatal(http.ListenAndServeTLS(fmt.Sprintf(":%v", listeningPort), "/etc/ssl/certs/server.crt", "/etc/ssl/private/server.key", n))
 }
