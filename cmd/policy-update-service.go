@@ -11,12 +11,14 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	policy "github.com/filetrust/policy-update-service/pkg"
+	"github.com/golang/gddo/httputil/header"
 	"github.com/gorilla/mux"
 	"github.com/shaj13/go-guardian/auth"
 	"github.com/shaj13/go-guardian/auth/strategies/basic"
 	"github.com/shaj13/go-guardian/auth/strategies/bearer"
 	"github.com/shaj13/go-guardian/store"
 	"github.com/urfave/negroni"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 var (
@@ -31,6 +33,15 @@ var (
 )
 
 func updatePolicy(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("Content-Type") != "" {
+		value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+		if value != "application/json" {
+			msg := "Content-Type header is not application/json"
+			http.Error(w, msg, http.StatusUnsupportedMediaType)
+			return
+		}
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("Unable to read request body: %v", err)
@@ -41,6 +52,14 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 	if len(body) == 0 {
 		log.Printf("Expected request body, but was nil")
 		http.Error(w, "Request body must not be empty.", http.StatusBadRequest)
+		return
+	}
+
+	validBody, errMsg := validateBody(body)
+
+	if !validBody {
+		log.Printf(errMsg)
+		http.Error(w, errMsg, http.StatusBadRequest)
 		return
 	}
 
@@ -65,6 +84,28 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("Successfully updated config map."))
+}
+
+func validateBody(body []byte) (bool, string) {
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///bin/schema.json")
+	bodyLoader := gojsonschema.NewBytesLoader(body)
+
+	result, err := gojsonschema.Validate(schemaLoader, bodyLoader)
+	if err != nil {
+		return false, err.Error()
+	}
+
+	if !result.Valid() {
+		errors := "The document is not valid. See errors :\n"
+
+		for _, desc := range result.Errors() {
+			errors += fmt.Sprintf("- %s\n", desc)
+		}
+
+		return false, errors
+	}
+
+	return true, ""
 }
 
 func createToken(w http.ResponseWriter, r *http.Request) {
