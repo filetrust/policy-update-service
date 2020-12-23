@@ -120,7 +120,7 @@
                             "description": "The watermark to apply."
                         }
                     },
-                    "additionalProperties": true
+                    "additionalProperties": false
                 },
                 "WordContentManagement": {
                     "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement",
@@ -203,7 +203,7 @@
                             "exclusiveMaximum": 2
                         }
                     },
-                    "additionalProperties": true
+                    "additionalProperties": false
                 },
                 "ExcelContentManagement": {
                     "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement",
@@ -286,7 +286,7 @@
                             "exclusiveMaximum": 2
                         }
                     },
-                    "additionalProperties": true
+                    "additionalProperties": false
                 },
                 "PowerPointContentManagement": {
                     "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement",
@@ -360,10 +360,10 @@
                             "exclusiveMaximum": 2
                         }
                     },
-                    "additionalProperties": true
+                    "additionalProperties": false
                 }
             },
-            "additionalProperties": true
+            "additionalProperties": false
         },
         "UnprocessableFileTypeAction": {
             "$id": "#/properties/UnprocessableFileTypeAction",
@@ -406,5 +406,5 @@
             "description": "Error message for files which cannot be Rebuilt."
         }
     },
-    "additionalProperties": true
+    "additionalProperties": false
 }
