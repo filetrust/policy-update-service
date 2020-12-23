@@ -17,6 +17,7 @@ import (
 	"github.com/shaj13/go-guardian/auth/strategies/bearer"
 	"github.com/shaj13/go-guardian/store"
 	"github.com/urfave/negroni"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 var (
@@ -44,6 +45,12 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !validateBody(body) {
+		log.Printf("Request body is not valid")
+		http.Error(w, "Request body is invalid.", http.StatusBadRequest)
+		return
+	}
+
 	args := policy.PolicyArgs{
 		Policy:        string(body),
 		Namespace:     namespace,
@@ -65,6 +72,23 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("Successfully updated config map."))
+}
+
+func validateBody(body []byte) bool {
+	schemaLoader := gojsonschema.NewReferenceLoader("file:///bin/schema.json")
+	bodyLoader := gojsonschema.NewBytesLoader(body)
+
+	result, err := gojsonschema.Validate(schemaLoader, bodyLoader)
+	if err != nil {
+		log.Printf(err.Error())
+		return false
+	}
+
+	if !result.Valid() {
+		return false
+	}
+
+	return true
 }
 
 func createToken(w http.ResponseWriter, r *http.Request) {

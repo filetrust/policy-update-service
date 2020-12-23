@@ -1,0 +1,410 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "required": [
+        "PolicyId",
+        "ContentManagementFlags",
+        "UnprocessableFileTypeAction",
+        "GlasswallBlockedFilesAction",
+        "NcfsRoutingUrl",
+        "ArchiveErrorReportMessage",
+        "ArchivePasswordProtectedReportMessage",
+        "RebuildReportMessage"
+    ],
+    "properties": {
+        "PolicyId": {
+            "$id": "#/properties/PolicyId",
+            "type": "string",
+            "title": "The PolicyId schema",
+            "description": "The Id of the policy."
+        },
+        "ContentManagementFlags": {
+            "$id": "#/properties/ContentManagementFlags",
+            "type": "object",
+            "title": "The ContentManagementFlags schema",
+            "description": "The Content Management Flags.",
+            "required": [
+                "PdfContentManagement",
+                "WordContentManagement",
+                "ExcelContentManagement",
+                "PowerPointContentManagement"
+            ],
+            "properties": {
+                "PdfContentManagement": {
+                    "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement",
+                    "type": "object",
+                    "title": "The PdfContentManagement schema",
+                    "description": "The Content Management Flags for pdf files.",
+                    "required": [
+                        "Acroform",
+                        "ActionsAll",
+                        "EmbeddedFiles",
+                        "EmbeddedImages",
+                        "ExternalHyperlinks",
+                        "InternalHyperlinks",
+                        "Javascript",
+                        "Metadata",
+                        "Watermark"
+                    ],
+                    "properties": {
+                        "Acroform": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/Acroform",
+                            "type": "integer",
+                            "title": "The Acroform schema",
+                            "description": "The action to take for Acroform.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ActionsAll": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/ActionsAll",
+                            "type": "integer",
+                            "title": "The ActionsAll schema",
+                            "description": "The action to take for ActionsAll.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "EmbeddedFiles": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/EmbeddedFiles",
+                            "type": "integer",
+                            "title": "The EmbeddedFiles schema",
+                            "description": "The action to take for EmbeddedFiles.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "EmbeddedImages": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/EmbeddedImages",
+                            "type": "integer",
+                            "title": "The EmbeddedImages schema",
+                            "description": "The action to take for EmbeddedImages.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ExternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/ExternalHyperlinks",
+                            "type": "integer",
+                            "title": "The ExternalHyperlinks schema",
+                            "description": "The action to take for ExternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "InternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/InternalHyperlinks",
+                            "type": "integer",
+                            "title": "The InternalHyperlinks schema",
+                            "description": "The action to take for InternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Javascript": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/Javascript",
+                            "type": "integer",
+                            "title": "The Javascript schema",
+                            "description": "The action to take for Javascript.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Metadata": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/Metadata",
+                            "type": "integer",
+                            "title": "The Metadata schema",
+                            "description": "The action to take for Metadata.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Watermark": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PdfContentManagement/properties/Watermark",
+                            "type": "string",
+                            "title": "The Watermark schema",
+                            "description": "The watermark to apply."
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "WordContentManagement": {
+                    "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement",
+                    "type": "object",
+                    "title": "The WordContentManagement schema",
+                    "description": "The Content Management Flags for word files.",
+                    "required": [
+                        "DynamicDataExchange",
+                        "EmbeddedFiles",
+                        "EmbeddedImages",
+                        "ExternalHyperlinks",
+                        "InternalHyperlinks",
+                        "Macros",
+                        "Metadata",
+                        "ReviewComments"
+                    ],
+                    "properties": {
+                        "DynamicDataExchange": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/DynamicDataExchange",
+                            "type": "integer",
+                            "title": "The DynamicDataExchange schema",
+                            "description": "The action to take for DynamicDataExchange.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "EmbeddedFiles": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/EmbeddedFiles",
+                            "type": "integer",
+                            "title": "The EmbeddedFiles schema",
+                            "description": "The action to take for EmbeddedFiles.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "EmbeddedImages": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/EmbeddedImages",
+                            "type": "integer",
+                            "title": "The EmbeddedImages schema",
+                            "description": "The action to take for EmbeddedImages.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ExternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/ExternalHyperlinks",
+                            "type": "integer",
+                            "title": "The ExternalHyperlinks schema",
+                            "description": "The action to take for ExternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "InternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/InternalHyperlinks",
+                            "type": "integer",
+                            "title": "The InternalHyperlinks schema",
+                            "description": "The action to take for InternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Macros": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/Macros",
+                            "type": "integer",
+                            "title": "The Macros schema",
+                            "description": "The action to take for Macros.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Metadata": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/Metadata",
+                            "type": "integer",
+                            "title": "The Metadata schema",
+                            "description": "The action to take for Metadata.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ReviewComments": {
+                            "$id": "#/properties/ContentManagementFlags/properties/WordContentManagement/properties/ReviewComments",
+                            "type": "integer",
+                            "title": "The ReviewComments schema",
+                            "description": "The action to take for ReviewComments.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "ExcelContentManagement": {
+                    "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement",
+                    "type": "object",
+                    "title": "The ExcelContentManagement schema",
+                    "description": "The Content Management Flags for excel files.",
+                    "required": [
+                        "DynamicDataExchange",
+                        "EmbeddedFiles",
+                        "EmbeddedImages",
+                        "ExternalHyperlinks",
+                        "InternalHyperlinks",
+                        "Macros",
+                        "Metadata",
+                        "ReviewComments"
+                    ],
+                    "properties": {
+                        "DynamicDataExchange": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/DynamicDataExchange",
+                            "type": "integer",
+                            "title": "The DynamicDataExchange schema",
+                            "description": "The action to take for DynamicDataExchange.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "EmbeddedFiles": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/EmbeddedFiles",
+                            "type": "integer",
+                            "title": "The EmbeddedFiles schema",
+                            "description": "The action to take for EmbeddedFiles.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "EmbeddedImages": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/EmbeddedImages",
+                            "type": "integer",
+                            "title": "The EmbeddedImages schema",
+                            "description": "The action to take for EmbeddedImages.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ExternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/ExternalHyperlinks",
+                            "type": "integer",
+                            "title": "The ExternalHyperlinks schema",
+                            "description": "The action to take for ExternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "InternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/InternalHyperlinks",
+                            "type": "integer",
+                            "title": "The InternalHyperlinks schema",
+                            "description": "The action to take for InternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Macros": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/Macros",
+                            "type": "integer",
+                            "title": "The Macros schema",
+                            "description": "The action to take for Macros.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Metadata": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/Metadata",
+                            "type": "integer",
+                            "title": "The Metadata schema",
+                            "description": "The action to take for Metadata.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ReviewComments": {
+                            "$id": "#/properties/ContentManagementFlags/properties/ExcelContentManagement/properties/ReviewComments",
+                            "type": "integer",
+                            "title": "The ReviewComments schema",
+                            "description": "The action to take for ReviewComments.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "PowerPointContentManagement": {
+                    "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement",
+                    "type": "object",
+                    "title": "The PowerPointContentManagement schema",
+                    "description": "The Content Management Flags for powerpoint files.",
+                    "required": [
+                        "EmbeddedFiles",
+                        "EmbeddedImages",
+                        "ExternalHyperlinks",
+                        "InternalHyperlinks",
+                        "Macros",
+                        "Metadata",
+                        "ReviewComments"
+                    ],
+                    "properties": {
+                        "EmbeddedFiles": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement/properties/EmbeddedFiles",
+                            "type": "integer",
+                            "title": "The EmbeddedFiles schema",
+                            "description": "The action to take for EmbeddedFiles.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "EmbeddedImages": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement/properties/EmbeddedImages",
+                            "type": "integer",
+                            "title": "The EmbeddedImages schema",
+                            "description": "The action to take for EmbeddedImages.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ExternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement/properties/ExternalHyperlinks",
+                            "type": "integer",
+                            "title": "The ExternalHyperlinks schema",
+                            "description": "The action to take for ExternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "InternalHyperlinks": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement/properties/InternalHyperlinks",
+                            "type": "integer",
+                            "title": "The InternalHyperlinks schema",
+                            "description": "The action to take for InternalHyperlinks.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Macros": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement/properties/Macros",
+                            "type": "integer",
+                            "title": "The Macros schema",
+                            "description": "The action to take for Macros.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "Metadata": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement/properties/Metadata",
+                            "type": "integer",
+                            "title": "The Metadata schema",
+                            "description": "The action to take for Metadata.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        },
+                        "ReviewComments": {
+                            "$id": "#/properties/ContentManagementFlags/properties/PowerPointContentManagement/properties/ReviewComments",
+                            "type": "integer",
+                            "title": "The ReviewComments schema",
+                            "description": "The action to take for ReviewComments.",
+                            "exclusiveMinimum": 0,
+                            "exclusiveMaximum": 2
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "UnprocessableFileTypeAction": {
+            "$id": "#/properties/UnprocessableFileTypeAction",
+            "type": "integer",
+            "title": "The UnprocessableFileTypeAction schema",
+            "description": "The action to take for Unprocessable File Types.",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 3
+        },
+        "GlasswallBlockedFilesAction": {
+            "$id": "#/properties/GlasswallBlockedFilesAction",
+            "type": "integer",
+            "title": "The GlasswallBlockedFilesAction schema",
+            "description": "The action to take for Blocked Files.",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 3
+        },
+        "NcfsRoutingUrl": {
+            "$id": "#/properties/NcfsRoutingUrl",
+            "type": "string",
+            "title": "The NcfsRoutingUrl schema",
+            "description": "The url to the Ncfs api."
+        },
+        "ArchiveErrorReportMessage": {
+            "$id": "#/properties/ArchiveErrorReportMessage",
+            "type": "string",
+            "title": "The ArchiveErrorReportMessage schema",
+            "description": "Error message for Archive files."
+        },
+        "ArchivePasswordProtectedReportMessage": {
+            "$id": "#/properties/ArchivePasswordProtectedReportMessage",
+            "type": "string",
+            "title": "The ArchivePasswordProtectedReportMessage schema",
+            "description": "Error message for Password Protected Archive files."
+        },
+        "RebuildReportMessage": {
+            "$id": "#/properties/RebuildReportMessage",
+            "type": "string",
+            "title": "The RebuildReportMessage schema",
+            "description": "Error message for files which cannot be Rebuilt."
+        }
+    },
+    "additionalProperties": true
+}

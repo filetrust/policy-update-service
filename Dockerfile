@@ -10,6 +10,7 @@ openssl req -x509 -nodes -days 365 -subj "/C=GB/ST=England/O=Glasswall Solutions
 
 FROM scratch
 COPY --from=builder /go/src/github.com/filetrust/policy-update-service/cmd/policy-update-service /bin/policy-update-service
+COPY --from=builder /go/src/github.com/filetrust/policy-update-service/schema/schema.json /bin/schema.json
 COPY --from=builder /etc/ssl/private/server.key /etc/ssl/private/
 COPY --from=builder /etc/ssl/certs/server.crt /etc/ssl/certs/
 
