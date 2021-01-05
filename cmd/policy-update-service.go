@@ -13,6 +13,8 @@ import (
 	policy "github.com/filetrust/policy-update-service/pkg"
 	"github.com/golang/gddo/httputil/header"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/shaj13/go-guardian/auth"
 	"github.com/shaj13/go-guardian/auth/strategies/basic"
 	"github.com/shaj13/go-guardian/auth/strategies/bearer"
@@ -21,7 +23,64 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
+const (
+	ok           = "ok"
+	usererr      = "user_error"
+	jwterr       = "jwt_error"
+	jsonerr      = "json_error"
+	k8sclient    = "k8s_client_error"
+	configmaperr = "configmap_error"
+)
+
 var (
+	tokenProcTime = promauto.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "gw_policyupdate_tokenrequest_processing_time_millisecond",
+			Help:    "Time taken to process token creation request",
+			Buckets: []float64{5, 10, 100, 250, 500, 1000},
+		},
+	)
+
+	tokenReqTotal = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "gw_policyupdate_tokenrequest_received_total",
+			Help: "Number of token creation requests received",
+		},
+		[]string{"status"},
+	)
+
+	policyUpdateProcTime = promauto.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "gw_policyupdate_updaterequest_processing_time_millisecond",
+			Help:    "Time taken to process policy update request",
+			Buckets: []float64{5, 10, 100, 250, 500, 1000},
+		},
+	)
+
+	policyUpdateReqTotal = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "gw_policyupdate_updaterequest_received_total",
+			Help: "Number of policy update requests received",
+		},
+		[]string{"status"},
+	)
+
+	authProcTime = promauto.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "gw_policyupdate_authenticate_processing_time_millisecond",
+			Help:    "Time taken to authenticate the request",
+			Buckets: []float64{5, 10, 100, 250, 500, 1000},
+		},
+	)
+
+	authReqTotal = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "gw_policyupdate_authenticate_received_total",
+			Help: "Number of authenticatations received",
+		},
+		[]string{"status"},
+	)
+
 	listeningPort = os.Getenv("LISTENING_PORT")
 	namespace     = os.Getenv("NAMESPACE")
 	configmapName = os.Getenv("CONFIGMAP_NAME")
@@ -33,9 +92,14 @@ var (
 )
 
 func updatePolicy(w http.ResponseWriter, r *http.Request) {
+	defer func(start time.Time) {
+		policyUpdateProcTime.Observe(float64(time.Since(start).Milliseconds()))
+	}(time.Now())
+
 	if r.Header.Get("Content-Type") != "" {
 		value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
 		if value != "application/json" {
+			policyUpdateReqTotal.WithLabelValues(jsonerr).Inc()
 			msg := "Content-Type header is not application/json"
 			http.Error(w, msg, http.StatusUnsupportedMediaType)
 			return
@@ -44,12 +108,14 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		policyUpdateReqTotal.WithLabelValues(jsonerr).Inc()
 		log.Printf("Unable to read request body: %v", err)
 		http.Error(w, "Unable to read request body.", http.StatusBadRequest)
 		return
 	}
 
 	if len(body) == 0 {
+		policyUpdateReqTotal.WithLabelValues(jsonerr).Inc()
 		log.Printf("Expected request body, but was nil")
 		http.Error(w, "Request body must not be empty.", http.StatusBadRequest)
 		return
@@ -58,6 +124,7 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 	validBody, errMsg := validateBody(body)
 
 	if !validBody {
+		policyUpdateReqTotal.WithLabelValues(jsonerr).Inc()
 		log.Printf(errMsg)
 		http.Error(w, errMsg, http.StatusBadRequest)
 		return
@@ -71,6 +138,7 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 
 	err = args.GetClient()
 	if err != nil {
+		policyUpdateReqTotal.WithLabelValues(k8sclient).Inc()
 		log.Printf("Unable to get client: %v", err)
 		http.Error(w, "Something went wrong getting K8 Client.", http.StatusInternalServerError)
 		return
@@ -78,12 +146,14 @@ func updatePolicy(w http.ResponseWriter, r *http.Request) {
 
 	err = args.UpdatePolicy()
 	if err != nil {
+		policyUpdateReqTotal.WithLabelValues(configmaperr).Inc()
 		log.Printf("Unable to update policy: %v", err)
 		http.Error(w, "Something went wrong when updating the config map.", http.StatusInternalServerError)
 		return
 	}
 
 	w.Write([]byte("Successfully updated config map."))
+	policyUpdateReqTotal.WithLabelValues(ok).Inc()
 }
 
 func validateBody(body []byte) (bool, string) {
@@ -109,6 +179,10 @@ func validateBody(body []byte) (bool, string) {
 }
 
 func createToken(w http.ResponseWriter, r *http.Request) {
+	defer func(start time.Time) {
+		tokenProcTime.Observe(float64(time.Since(start).Milliseconds()))
+	}(time.Now())
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"iss": "auth-app",
 		"sub": username,
@@ -117,6 +191,7 @@ func createToken(w http.ResponseWriter, r *http.Request) {
 	})
 	jwtToken, _ := token.SignedString([]byte("secret"))
 	w.Write([]byte(jwtToken))
+	tokenReqTotal.WithLabelValues(ok).Inc()
 }
 
 func validateUser(ctx context.Context, r *http.Request, usr, pass string) (auth.Info, error) {
@@ -124,18 +199,21 @@ func validateUser(ctx context.Context, r *http.Request, usr, pass string) (auth.
 		return auth.NewDefaultUser(usr, "1", nil, nil), nil
 	}
 
+	authReqTotal.WithLabelValues(usererr).Inc()
 	return nil, fmt.Errorf("Invalid credentials")
 }
 
 func verifyToken(ctx context.Context, r *http.Request, tokenString string) (auth.Info, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			authReqTotal.WithLabelValues(jwterr).Inc()
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte("secret"), nil
 	})
 
 	if err != nil {
+		authReqTotal.WithLabelValues(jwterr).Inc()
 		return nil, err
 	}
 
@@ -144,17 +222,23 @@ func verifyToken(ctx context.Context, r *http.Request, tokenString string) (auth
 		return user, nil
 	}
 
+	authReqTotal.WithLabelValues(jwterr).Inc()
 	return nil, fmt.Errorf("Invalid token")
 }
 
 func authMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	defer func(start time.Time) {
+		authProcTime.Observe(float64(time.Since(start).Milliseconds()))
+	}(time.Now())
+
 	log.Println("Executing Auth Middleware")
 	user, err := authenticator.Authenticate(r)
 	if err != nil {
-		code := http.StatusUnauthorized
-		http.Error(w, err.Error(), code)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
+
+	authReqTotal.WithLabelValues(ok).Inc()
 	log.Printf("User %s Authenticated\n", user.UserName())
 	next.ServeHTTP(w, r)
 }
