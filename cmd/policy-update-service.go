@@ -27,15 +27,6 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-const (
-	ok           = "ok"
-	usererr      = "user_error"
-	jwterr       = "jwt_error"
-	jsonerr      = "json_error"
-	k8sclient    = "k8s_client_error"
-	configmaperr = "configmap_error"
-)
-
 var (
 	listeningPort = os.Getenv("LISTENING_PORT")
 	metricsPort   = os.Getenv("METRICS_PORT")
