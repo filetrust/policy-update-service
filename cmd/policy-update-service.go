@@ -192,7 +192,6 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/auth/token", createToken).Methods("GET")
 	router.HandleFunc("/api/v1/policy", updatePolicy).Methods("PUT")
-	router.Path("/metrics").Handler(promhttp.Handler())
 
 	n := negroni.New()
 	n.Use(negroni.NewRecovery())
